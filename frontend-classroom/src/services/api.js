@@ -9,8 +9,8 @@ const api = axios.create({
 });
 
 const aiService = axios.create({
-    baseURL: 'http://localhost:3001/api',
-    timeout: 15000 // Aumentamos el tiempo de espera para respuestas complejas
+    baseURL: 'https://math-learning-kxc0.onrender.com/api',
+    timeout: 15000 
 });
 
 export const AcademicAPI = {
