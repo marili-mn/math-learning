@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'http://localhost:8000/api/v1', // URL de Laravel
+    baseURL: 'http://localhost:8000/api/v1',
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
@@ -9,7 +9,8 @@ const api = axios.create({
 });
 
 const aiService = axios.create({
-    baseURL: 'http://localhost:3001/api', // URL de Node.js (AI)
+    baseURL: 'http://localhost:3001/api',
+    timeout: 15000 // Aumentamos el tiempo de espera para respuestas complejas
 });
 
 export const AcademicAPI = {

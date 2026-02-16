@@ -1,55 +1,61 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
+/**
+ * Senior-level Academic Service
+ * Following @.agents/skills/laravel-specialist/references/eloquent.md
+ */
 class AcademicService
 {
     /**
-     * Retorna el catálogo de cursos disponibles (Mocks).
+     * @return array<int, array<string, mixed>>
      */
-    public function getCourses()
+    public function getCourses(): array
     {
         return [
             [
                 'id' => 1,
-                'title' => 'Introducción a las Ecuaciones',
-                'description' => 'Aprende las bases de las ecuaciones de primer grado.',
+                'title' => 'Cálculo de Variaciones',
+                'description' => 'Optimización de funcionales para trayectorias aeroespaciales.',
                 'is_premium' => false,
-                'thumbnail' => 'https://placehold.co/600x400?text=Ecuaciones+Gratis',
+                'thumbnail' => 'https://placehold.co/600x400?text=Calculo+I',
             ],
             [
                 'id' => 2,
-                'title' => 'Cálculo Diferencial Avanzado',
-                'description' => 'Domina las derivadas y sus aplicaciones en la vida real.',
+                'title' => 'Dinámica de Fluidos Avanzada',
+                'description' => 'Simulación de flujos supersónicos y ecuaciones de Navier-Stokes.',
                 'is_premium' => true,
-                'thumbnail' => 'https://placehold.co/600x400?text=Calculo+Premium',
+                'thumbnail' => 'https://placehold.co/600x400?text=Fluidos+Premium',
             ]
         ];
     }
 
     /**
-     * Retorna el contenido de una lección específica.
+     * @param int $lessonId
+     * @return array<string, mixed>
      */
-    public function getLessonContent(int $lessonId)
+    public function getLessonContent(int $lessonId): array
     {
-        // Mock de contenido de lección con soporte para video, texto y quiz
         return [
             'id' => $lessonId,
-            'title' => 'Ecuaciones de Primer Grado - Parte 1',
-            'type' => 'hybrid', // Video + Lectura + Quiz
+            'title' => 'Análisis de Tensores en Estructuras',
+            'type' => 'engineering_hybrid',
             'content' => [
-                'video_url' => 'https://www.youtube.com/embed/dQw4w9WgXcQ', // Link de ejemplo
-                'reading_material' => "Para resolver una ecuación como $2x + 5 = 15$, debemos despejar la variable $x$. 
+                'video_url' => 'https://www.youtube.com/embed/f5fWk_vOPTY',
+                'reading_material' => "Para analizar la deformación en el fuselaje, usamos el tensor de tensiones $\sigma_{ij}$. 
 
- 1. Restamos 5 en ambos lados: $2x = 10$. 
- 2. Dividimos por 2: $x = 5$.",
+1. **Definición:** El tensor describe las fuerzas internas.
+2. **Ecuación:** $\nabla \cdot \sigma + f = \rho \frac{\partial^2 u}{\partial t^2}$.",
                 'quiz' => [
-                    'question' => '¿Cuál es el valor de x en $3x - 9 = 0$?',
-                    'options' => ['x = 2', 'x = 3', 'x = 4', 'x = 9'],
-                    'correct_answer' => 1 // x = 3
+                    'question' => '¿Qué describe la divergencia del tensor de tensiones?',
+                    'options' => ['Fuerzas internas', 'Velocidad angular', 'Presión atmosférica', 'Masa crítica'],
+                    'correct_answer' => 0
                 ]
             ],
-            'context_for_ai' => 'El alumno está aprendiendo a despejar variables en ecuaciones lineales simples.'
+            'context_for_ai' => 'Estudiante de ingeniería aeroespacial analizando mecánica de sólidos y tensores.'
         ];
     }
 }

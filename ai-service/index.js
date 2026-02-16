@@ -8,49 +8,44 @@ app.use(cors());
 app.use(express.json());
 
 const PORT = process.env.PORT || 3001;
-
-// Configuración de Groq
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-const SOCRATIC_PROMPT = `
-Eres Mathy, un tutor de matemáticas experto de la plataforma MathFlow. 
-Tu metodología es el MÉTODO SOCRÁTICO. 
-REGLAS ESTRICTAS:
-1. NUNCA des la respuesta final directamente.
-2. Si el usuario te da un problema, analízalo y hazle una pregunta que lo guíe al siguiente paso.
-3. Usa lenguaje motivador pero profesional.
-4. Si el usuario escribe fórmulas, responde usando formato LaTeX entre signos de dólar, ejemplo: $x^2$.
-5. Si el usuario parece perdido, da una pequeña pista conceptual.
+const SYSTEM_PROMPT = `
+Eres MATHY_CORE_AGENT v3.0. Operas en el entorno de Misión Crítica de MathFlow.
+PROTOCOLO:
+1. Pensamiento Interno: <thought> Analizar variables y contexto técnico. </thought>
+2. Respuesta: Guía socrática usando terminología de ingeniería aeroespacial.
+3. Formato: Usa Markdown y LaTeX.
+4. Restricción: Nunca des el resultado final.
 `;
 
 app.post('/api/chat', async (req, res) => {
-    const { message, history, problemContext } = req.body;
+    let { message, history } = req.body;
+
+    if (!message) return res.status(400).json({ error: "EMPTY_SIGNAL" });
 
     try {
-        const messages = [
-            { role: "system", content: SOCRATIC_PROMPT },
-            ...history.map(h => ({
-                role: h.role === 'model' ? 'assistant' : 'user',
-                content: h.parts[0].text
-            })),
-            {
-                role: "user",
-                content: `Contexto del problema actual: ${problemContext}\n\nPregunta del alumno: ${message}`
-            }
-        ];
+        const formattedHistory = (Array.isArray(history) ? history : []).map(h => ({
+            role: h.role === 'model' || h.role === 'assistant' ? 'assistant' : 'user',
+            content: typeof h.text === 'string' ? h.text : (h.content || JSON.stringify(h))
+        }));
 
         const completion = await groq.chat.completions.create({
-            messages: messages,
-            model: "llama3-8b-8192",
+            messages: [
+                { role: "system", content: SYSTEM_PROMPT },
+                ...formattedHistory,
+                { role: "user", content: message }
+            ],
+            model: "llama-3.1-8b-instant", // Usamos el más rápido para evitar timeouts
+            temperature: 0.2,
         });
 
-        res.json({ text: completion.choices[0]?.message?.content || "" });
+        const agentResponse = completion.choices[0]?.message?.content || "SISTEMA EN STANDBY. REINTENTE.";
+        res.json({ text: agentResponse });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Error procesando la IA con Groq" });
+        console.error("AGENT_CRITICAL_FAILURE:", error.message);
+        res.status(500).json({ text: "ERR_COMM_LINK: El núcleo del agente no responde." });
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`AI Service running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`MATHY_v3_CORE ONLINE [PORT ${PORT}]`));
