@@ -160,7 +160,7 @@ function App() {
         )}
 
         {view === 'classroom' && (
-          <iframe id="classroom-frame" src="http://localhost:5173" className="iframe-full" title="Aula" />
+          <iframe id="classroom-frame" src="https://math-learning-za5l.vercel.app/" className="iframe-full" title="Aula" />
         )}
 
         {view === 'billing' && (
