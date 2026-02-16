@@ -1,0 +1,70 @@
+services:
+  # Laravel Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: mathflow-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/var/www/html
+    networks:
+      - mathflow-network
+    depends_on:
+      - db
+
+  # Node.js AI Service
+  ai-service:
+    build:
+      context: ./ai-service
+    container_name: mathflow-ai-service
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./ai-service:/usr/src/app
+    networks:
+      - mathflow-network
+    environment:
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - PORT=3001
+
+  # React Landing Page
+  frontend-landing:
+    build:
+      context: ./frontend-landing
+    container_name: mathflow-landing
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend-landing:/app
+    networks:
+      - mathflow-network
+
+  # Vue Classroom App
+  frontend-classroom:
+    build:
+      context: ./frontend-classroom
+    container_name: mathflow-classroom
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./frontend-classroom:/app
+    networks:
+      - mathflow-network
+
+  # Database
+  db:
+    image: mysql:8.0
+    container_name: mathflow-db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: mathflow_db
+      MYSQL_ROOT_PASSWORD: root
+    networks:
+      - mathflow-network
+
+networks:
+  mathflow-network:
+    driver: bridge
